@@ -12,6 +12,11 @@ To see the list of the app components, run Storybook with command
 
 `npm run storybook`
 
+# Routes
+
+> Show homelessness data for location in given year
+> `http://localhost:3000/homelessness/E12000007/2021`
+
 # Run Favnotes App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
