@@ -18,7 +18,8 @@ const Home = () => {
   //const year = 2022;
   const locationId = location;
 
-  const API_URL = 'http://localhost:3001/api';
+  //const API_URL = 'http://localhost:3001/api';
+  const API_URL = 'http://139.162.238.75:3001/api';
 
   const [locationName, setLocationName] = useState('');
   const [post, setPost] = useState({});
