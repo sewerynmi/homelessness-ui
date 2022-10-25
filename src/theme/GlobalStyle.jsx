@@ -16,16 +16,35 @@ const GlobalStyle = createGlobalStyle`
     }
 
     body {
-        padding-left: 150px;
-        padding-right:150px;
+        
         font-size: 2rem;
         font-family: Barlow, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         color: rgb(51, 51, 51);
+        background-color:#000;
+    }
+
+    .content, .main-header {
+        padding-left: 50px;
+        padding-right:150px;
+        max-width: 80%;
+        min-width: 90%;
+        margin: 0px auto;
+       
+    }
+
+    .content {
+        background-color:#fff;
+        padding-bottom: 80px;
     }
 
     .container {
         display:flex;
         flex-direction: row;
+    }
+
+    .main-header {
+        color: #fff;
+        padding-left: 0px;
     }
 
     .one-half {

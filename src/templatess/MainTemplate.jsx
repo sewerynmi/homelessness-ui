@@ -19,7 +19,12 @@ const MainTemplate = ({ children }) => {
         ></link>
       </Helmet>
       <GlobalStyle />
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      <div className="main-header">
+        <h1>Homelessness Data Hub</h1>
+      </div>
+      <div className="content">
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      </div>
     </div>
   );
 };

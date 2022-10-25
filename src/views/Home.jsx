@@ -18,11 +18,12 @@ const Home = () => {
   //const year = 2022;
   const locationId = location;
 
-  //const API_URL = 'http://localhost:3001/api';
-  const API_URL = 'http://139.162.238.75:3001/api';
+  const API_URL = 'http://localhost:3001/api';
+  //const API_URL = 'http://139.162.238.75:3001/api';
 
   const [locationName, setLocationName] = useState('');
   const [post, setPost] = useState({});
+
   const [locationResult, setLocationResult] = useState({
     period: 'jan-mar',
     year: new Date().getFullYear(),
@@ -30,8 +31,17 @@ const Home = () => {
     total_oprd: 0,
     threatened: 0,
   });
+
+  const [locationPrevResult, setLocationPrevResult] = useState({
+    total_init: 0,
+    total_oprd: 0,
+    threatened: 0,
+    rate: 0,
+  });
+
   const [locationPopulation, setLocationPopulation] = useState(0);
   const [stats, setStats] = useState({ rateOfHomelessInLocation: 0 });
+  const [prevPeriod, setPrevPeriod] = useState({ period: 'jan-mar', year: year });
 
   useEffect(() => {
     axios.get(API_URL + `/homelessness/year/${year}/location/${locationId}`).then((response) => {
@@ -46,14 +56,34 @@ const Home = () => {
     // do some stat calc
     const rate = Math.floor(parseInt(locationPopulation) / parseInt(locationResult.total_init));
     setStats({ ...stats, rateOfHomelessInLocation: rate });
-    calculatePreviousPeriod(locationResult.period, locationResult.year);
+    const prevPeriod = calculatePreviousPeriod(locationResult.period, locationResult.year);
+    setPrevPeriod(prevPeriod);
+
+    // Calculate stats considering prev period
+    if (post.result) {
+      if (post.result[1] !== undefined) {
+        const prevResults = post.result[1];
+        const ratePrev = Math.floor(
+          parseInt(locationPopulation) / parseInt(prevResults.total_init),
+        );
+        console.log(prevResults);
+      }
+    }
   }, [post]);
 
   /* Calculate previous period */
   const calculatePreviousPeriod = (curPeriod, curYear) => {
-    console.log('Calculation previous period from: ' + curPeriod + ' , ' + curYear);
-    if (curPeriod == 'jan-mar') {
+    let prevPeriod = { period: '', year: curYear };
+    const periods = ['jan-mar', 'apr-jun', 'jul-sept', 'oct-dec'];
+    let curPeriodId = periods.findIndex((cp) => cp == curPeriod);
+
+    if (curPeriodId == 0) {
+      prevPeriod.period = periods[3];
+      prevPeriod.year = curYear - 1;
+    } else {
+      prevPeriod.period = periods[curPeriodId - 1];
     }
+    return prevPeriod;
   };
 
   return (
@@ -78,7 +108,7 @@ const Home = () => {
           <p>
             Homelessness in <span className="underscore">{locationName}</span> in <b>{year}</b> with
             total population of <b>{numberWithCommas(locationPopulation)}</b> <br />
-            Data for period: <b>{locationResult.period}</b>
+            Data for period: <b>{locationResult.period}</b> , <b>{year}</b>
           </p>
           <p>Total initial assessments</p>
           <StatTextLarge>{numberWithCommas(locationResult.total_init)}</StatTextLarge>
