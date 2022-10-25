@@ -78,6 +78,22 @@ const GlobalStyle = createGlobalStyle`
     .p10 {
         padding-top:10px;
     }
+
+    .arrow {
+        font-weight:600;
+        font-size:50%;
+        position: absolute;
+        top: 0px;
+    }
+
+    .arrow.arrow-up {
+        color: red;
+    }
+    
+    .arrow.arrow-drop {
+        color: green;
+    }
+    
 `;
 
 export default GlobalStyle;

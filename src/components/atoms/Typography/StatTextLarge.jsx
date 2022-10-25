@@ -8,6 +8,7 @@ const StatTextLarge = styled.span`
   font-family: Barlow, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
   padding-bottom: 5;
   border-bottom: 1px solid #ddd;
+  position: relative;
 `;
 
 export default StatTextLarge;
