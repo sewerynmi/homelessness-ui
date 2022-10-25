@@ -2,15 +2,16 @@ import { date } from '@storybook/addon-knobs';
 import axios from 'axios';
 import Button from 'components/atoms/Button/Button';
 import PageTitle from 'components/atoms/PageTitle/PageTitle';
+import ArrowDrop from 'components/ArrowDrop';
+import ArrowUp from 'components/ArrowUp';
 import Heading from 'components/atoms/Typography/Heading';
 import Heading3 from 'components/atoms/Typography/Heading3';
 import StatTextLarge from 'components/atoms/Typography/StatTextLarge';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
+import { numberWithCommas } from 'misc/formatting';
+import { calculatePreviousPeriod, calculatePercentageDiffBetweenValues } from 'misc/stats';
 
 const Home = () => {
   // Let's assume that year and locationId is given as param (url or post method)
@@ -58,33 +59,25 @@ const Home = () => {
     setStats({ ...stats, rateOfHomelessInLocation: rate });
     const prevPeriod = calculatePreviousPeriod(locationResult.period, locationResult.year);
     setPrevPeriod(prevPeriod);
+  }, [post]);
 
+  useEffect(() => {
     // Calculate stats considering prev period
     if (post.result) {
       if (post.result[1] !== undefined) {
         const prevResults = post.result[1];
+        console.log('Previous Period Results ', prevResults);
         const ratePrev = Math.floor(
           parseInt(locationPopulation) / parseInt(prevResults.total_init),
         );
-        console.log(prevResults);
+        setLocationPrevResult((prevState) => {
+          console.log(prevState);
+          return { ...prevState, rate: ratePrev };
+        });
+        console.log('Global Prev Period Results STATS: ', locationPrevResult);
       }
     }
-  }, [post]);
-
-  /* Calculate previous period */
-  const calculatePreviousPeriod = (curPeriod, curYear) => {
-    let prevPeriod = { period: '', year: curYear };
-    const periods = ['jan-mar', 'apr-jun', 'jul-sept', 'oct-dec'];
-    let curPeriodId = periods.findIndex((cp) => cp == curPeriod);
-
-    if (curPeriodId == 0) {
-      prevPeriod.period = periods[3];
-      prevPeriod.year = curYear - 1;
-    } else {
-      prevPeriod.period = periods[curPeriodId - 1];
-    }
-    return prevPeriod;
-  };
+  }, [prevPeriod, locationResult]);
 
   return (
     <React.Fragment>
@@ -121,6 +114,25 @@ const Home = () => {
           <p>Rate of people who are homeless</p>
           <StatTextLarge>
             1 in {numberWithCommas(parseInt(stats.rateOfHomelessInLocation))}
+            {locationPrevResult.rate < stats.rateOfHomelessInLocation ? (
+              <ArrowDrop
+                percentage={parseFloat(
+                  calculatePercentageDiffBetweenValues(
+                    stats.rateOfHomelessInLocation,
+                    locationPrevResult.rate,
+                  ),
+                ).toFixed(2)}
+              />
+            ) : (
+              <ArrowUp
+                percentage={parseFloat(
+                  calculatePercentageDiffBetweenValues(
+                    stats.rateOfHomelessInLocation,
+                    locationPrevResult.rate,
+                  ),
+                ).toFixed(2)}
+              />
+            )}
           </StatTextLarge>
 
           <p>
